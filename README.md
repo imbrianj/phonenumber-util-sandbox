@@ -3,8 +3,8 @@ This utility allows for quick sandbox testing of the [@yext/phonenumber-util](ht
 #### Install and Use
 
 ```bash
-git clone [repo]
-cd [repo]
+git clone https://github.com/imbrianj/phonenumber-util-sandbox.git
+cd phonenumber-util-sandbox
 npm i
 npm start 
 ```
