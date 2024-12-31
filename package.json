@@ -1,0 +1,11 @@
+{
+  "name": "phonenumber-util-sandbox",
+  "version": "0.0.1",
+  "author": "bajohnson@hearsaycorp.com",
+  "license": "BSD-3-Clause",
+  "description": "Simple sandbox for testing the lateset phonenumber-util",
+  "type": "module",
+  "dependencies": {
+    "@yext/phonenumber-util": "*"
+  }
+}

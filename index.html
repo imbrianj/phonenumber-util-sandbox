@@ -1,0 +1,140 @@
+<html>
+  <head>
+    <title>Sandbox for phonenumber-util</title>
+    <style type="text/css">
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      div {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      #status {
+        background-color: #444;
+        border-radius: 50%;
+        display: block;
+        height: 1.5rem;
+        overflow: hidden;
+        position: absolute;
+        right: 1rem;
+        text-indent: -999rem;
+        top: 1rem;
+        width: 1.5rem;
+      }
+
+      #status.connected {
+        background: #0078E7;
+      }
+      
+      #status.error {
+        background: #f00;
+      }
+
+      textarea {
+        border: none;
+        box-sizing: border-box;
+        outline: 1px solid #ddd;
+        overflow: auto;
+        padding: 8px;
+        resize: vertical;
+      }
+
+      textarea#input {
+        height: 10rem;
+      }
+
+      textarea#input:focus {
+        background-color: #f7f7f7;
+      }
+
+      textarea#output {
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <span id="status"></span>
+      <textarea id="input">In the middle of a bustling New York City cafe, a young woman named Ellie found herself distracted by a stranger across the room. She watched as he scribbled notes in a worn leather notebook, his dark curls spilling over his forehead. She noticed the way he laughed quietly to himself, as if sharing an inside joke with the world. After almost half an hour of stolen glances, her phone buzzed with a call from an unknown number, (718) 392-5471, which she quickly dismissed, thinking she'd call them back later. But just as she put her phone away, she caught his eye. Startled, she blushed and looked down, her fingers nervously tapping out a text to her best friend: "I think I just made eye contact with the cutest guy here - send help!!" Moments later, another message popped up on her phone from a number she didn't recognize: +44 20 7946 0958 - an old friend from London she'd met while backpacking through Europe. Her friend was inviting her for a visit, but Ellie saved the message for later, her thoughts entirely absorbed by the handsome stranger across the room.
+
+At that moment, the stranger walked over and introduced himself as Luke. He handed her his business card, which displayed his phone number, (646) 801-2345. He worked in publishing, he said, and was editing a novel that had him in stitches all day. They spent the next half-hour talking over coffee, completely absorbed in each other, even as her phone buzzed again with an incoming call from +33 1 42 68 0534 - her cousin in Paris, who called every once in a while just to chat. Smiling, she quickly silenced the call, focusing entirely on Luke. "You should text me sometime," he said, smiling as he walked out, leaving her speechless and grinning. She quickly saved his number under "Luke - Cute Stranger."
+
+Over the next few weeks, their texts came fast and frequently. Once, she called him accidentally while trying to dial a client's number from her work phone, which had the area code (631) 227-4532. Embarrassed, she quickly hung up, but Luke called her right back, teasing her about "forgetting his voice." That same evening, her phone lit up with a message from +49 89 1234 5678 - a German friend from Munich reminding her about Oktoberfest. She ignored it, focusing on her plans with Luke for that evening. They spent hours talking over wine and pasta, losing track of time and nearly forgetting the world outside. She couldn't believe how perfectly they fit together.
+
+One rainy night, Luke called her from his landline, (212) 444-7788, to tell her he was standing outside her building with flowers, drenched but grinning. They both laughed as she buzzed him in, and as he stepped inside, he held up the bouquet with a sheepish grin. "This was the only place open past midnight," he joked. That night, as they cuddled on her couch, she felt her heart race every time he looked at her, whispering stories and sharing secrets. Her phone rang again, this time from +61 2 9374 1234 - her college roommate who had moved to Sydney, Australia, and she smiled, saving the call for another day, refusing to let anything interrupt the perfect moment she was sharing with Luke.
+
+On a Sunday afternoon, Luke invited her to meet his family. Nervous, Ellie called her best friend on her second phone, which had the area code +1 905 555 7890 - her best friend had moved to Canada a few years ago but still served as her source of support. But as soon as she arrived, Luke's mother greeted her warmly, instantly putting her at ease. His sister, who worked for a magazine, even offered her business card with her direct line, (718) 555-4455, saying, "Call me if you ever want to write!" Over the next few months, their lives intertwined beautifully, with calls from random numbers - +81 3 1234 5678 from his college friend in Tokyo, (917) 425-9283 from her aunt in Long Island - but no matter who called or how busy they became, they always found their way back to each other. They were falling, deeply and unmistakably, into the kind of love she'd only dreamed of.</textarea>
+      <textarea id="output" readonly></textarea>
+    </div>
+    <script type="module">
+      (function() {
+        const ui = {
+          status: document.getElementById('status'),
+          input: document.getElementById('input'),
+          output: document.getElementById('output')
+        };
+
+        const strings = {
+          en: {
+            'Connecting': 'Connecting',
+            'Connected': 'Connected',
+            'Error': 'Error'
+          }
+        };
+
+        ui.status.className = 'connecting';
+        ui.status.innerHTML = strings.en.Connecting;
+        ui.status.title = strings.en.Connecting;
+
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.addEventListener('open', () => {
+          console.log('WebSocket connection established');
+
+          ui.status.className = 'connected';
+          ui.status.innerHTML = strings.en.Connected;
+          ui.status.title = strings.en.Connected;
+
+          if (ui.input.value) {
+            socket.send(ui.input.value);
+          }
+        });
+
+        socket.addEventListener('close', (error) => {
+          ui.status.className = 'error';
+          ui.status.innerHTML = strings.en.Error;
+          ui.status.title = strings.en.Error;
+        });
+
+        socket.addEventListener('error', (error) => {
+          ui.status.className = 'error';
+          ui.status.innerHTML = strings.en.Error;
+          ui.status.title = strings.en.Error;
+
+          console.error('WebSocket error:', error);
+        });
+
+        ui.input.addEventListener('input', function (evt) {
+          const value = evt.target.value;
+
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(value); // Send the value as a payload
+          } else {
+            console.error('WebSocket is not open');
+          }
+        });
+
+        // Handle messages from the server
+        socket.addEventListener('message', (event) => {
+          ui.output.value = event.data;
+        });
+      })();
+    </script>
+  </body>
+</html>
