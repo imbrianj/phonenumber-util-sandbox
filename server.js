@@ -316,5 +316,5 @@ server.listen(LISTEN_PORT, () => {
   /**
    * Logs that the server has started and is listening for connections.
    */
-  console.log('WebSocket server running on ws://localhost:' + LISTEN_PORT);
+  console.log('WebSocket server running on http://localhost:' + LISTEN_PORT);
 });
